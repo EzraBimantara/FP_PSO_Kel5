@@ -5,14 +5,14 @@
 </script>
 
 <template>
-    <div class="recipe_list-recipe row">
+    <div v-if="recipes && recipes.length > 0" class="recipe_list-recipe row">
         <div
             class="col-12 col-lg-3 col-sm-4 position-relative"
-            style="padding-top: 12px; padding-bottom: 12px" v-for="recipe in recipes">
+            style="padding-top: 12px; padding-bottom: 12px" v-for="recipe in recipes" :key="recipe.id">
             <div class="card text-decoration-none" style="height: 398px; text-align: left">
                 <RouterLink v-bind:to="'/recipe/' + recipe.id" style="text-decoration: none">
                     <img
-                        v-bind:src=[recipe.imageLink]
+                        v-bind:src="recipe.imageLink"
                         class="card-img-top"
                         alt="Food"
                         height="240"
@@ -33,5 +33,7 @@
             </div>
         </div>
     </div>  
-    
+    <div v-else class="empty-message text-center py-5">
+        <p>Belum ada resep yang bisa ditampilkan.</p>
+    </div>
 </template>

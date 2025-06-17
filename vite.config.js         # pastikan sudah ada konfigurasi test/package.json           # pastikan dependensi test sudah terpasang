@@ -1,0 +1,24 @@
+const { defineConfig } = require('vite');
+const { createVuePlugin } = require('vite-plugin-vue');
+
+module.exports = defineConfig({
+  plugins: [createVuePlugin()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+  },
+});
+
+{
+  "devDependencies": {
+    "vitest": "^latest",
+    "vite-plugin-vue": "^latest"
+  }
+}
+
+describe('HelloWorld', () => {
+  it('renders properly', () => {
+    const { getByText } = render(HelloWorld);
+    expect(getByText('Hello World')).toBeInTheDocument();
+  });
+});
