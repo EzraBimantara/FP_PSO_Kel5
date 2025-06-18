@@ -18,7 +18,7 @@ export default {
     },
     setNewRecipe(state, payload) {
       state.recipes.push(payload);
-    }
+    },
   },
   actions: {
     async getRecipeData({ commit }) {
@@ -28,7 +28,7 @@ export default {
         );
 
         const arr = [];
-        for (let key in data) {
+        for (const key in data) {
           arr.push({ id: key, ...data[key] });
         }
         commit("setRecipeData", arr);
@@ -36,6 +36,7 @@ export default {
         console.log(err);
       }
     },
+
     async getRecipeDetail({ commit }, payload) {
       try {
         const { data } = await axios.get(
@@ -46,6 +47,7 @@ export default {
         console.log(err);
       }
     },
+
     async addNewRecipe({ commit, rootState }, payload) {
       const newData = {
         ...payload,
@@ -66,6 +68,7 @@ export default {
         console.log(err);
       }
     },
+
     async deleteRecipe({ dispatch, rootState }, payload) {
       try {
         await axios.delete(
@@ -76,6 +79,7 @@ export default {
         console.log(err);
       }
     },
+
     async updateRecipe({ dispatch, rootState }, { id, newRecipe }) {
       try {
         await axios.put(
@@ -86,6 +90,43 @@ export default {
       } catch (err) {
         console.log(err);
       }
-    }
-  }
+    },
+
+    async toggleFavorite({ rootState, dispatch }, recipeId) {
+      const userId = rootState.auth.userLogin.userId;
+      if (!userId) {
+        console.error("User not logged in!");
+        return;
+      }
+
+      const token = rootState.auth.token;
+      try {
+        const response = await axios.get(
+          `https://timedoorezra-default-rtdb.firebaseio.com/recipes/${recipeId}.json?auth=${token}`
+        );
+        const recipeData = response.data;
+
+        if (!recipeData.likes || recipeData.likes.includes("null")) {
+          recipeData.likes = [];
+        }
+
+        const userIndex = recipeData.likes.indexOf(userId);
+        if (userIndex >= 0) {
+          recipeData.likes.splice(userIndex, 1);
+        } else {
+          recipeData.likes.push(userId);
+        }
+
+        await axios.patch(
+          `https://timedoorezra-default-rtdb.firebaseio.com/recipes/${recipeId}.json?auth=${token}`,
+          { likes: recipeData.likes }
+        );
+
+        await dispatch("getRecipeDetail", recipeId);
+        await dispatch("getRecipeData");
+      } catch (err) {
+        console.error("Error updating favorite status:", err);
+      }
+    },
+  },
 };
