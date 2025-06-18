@@ -21,6 +21,9 @@ import SignupMenu from '../../header/SignupMenu.vue'
 import { RouterLinkStub } from '@vue/test-utils'
 import WebHeader from '../../header/WebHeader.vue'
 
+
+
+
 // Mock child components
 vi.mock('../../auth/WebSignup.vue', () => ({ default: { template: '<div>SignupForm</div>' } }))
 vi.mock('../../auth/WebLogin.vue', () => ({ default: { template: '<div>LoginForm</div>' } }))
