@@ -368,14 +368,12 @@ describe('WebHeader.vue', () => {
     // Basic existence check
     expect(wrapper.exists()).toBe(true)
 
-    // Check header element exists with correct classes
     const header = wrapper.find('header')
     expect(header.exists()).toBe(true)
     expect(header.classes()).toContain('shadow-sm')
     expect(header.classes()).toContain('bg-white')
     expect(header.classes()).toContain('fixed-top')
 
-    // Check logo link exists
     const logoLink = wrapper.findComponent(RouterLinkStub)
     expect(logoLink.exists()).toBe(true)
     expect(logoLink.props().to).toBe('/')
