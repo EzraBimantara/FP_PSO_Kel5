@@ -404,3 +404,4 @@ describe('WebHeader.vue', () => {
     expect(navBar.exists()).toBe(true)
   })
 })
+
