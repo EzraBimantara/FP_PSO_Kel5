@@ -1,16 +1,23 @@
 <script setup>
     defineProps({
-        data: { type: Array, require: true },
-        id: { type: String, require: true },
-        modelValue: { type: [String, Number] }
-    })
+        data: Array,
+        modelValue: String // Prop untuk v-model
+    });
+    const emit = defineEmits(['update:modelValue']); // Emit untuk v-model
+
+    // Fungsi yang akan kita uji
+    function handleChange(event) {
+        emit('update:modelValue', event.target.value);
+    }
 </script>
 
 <template>
-    <select class="form-select" :id="id"
-    @input="$emit('update:modelValue', $event.target.value)">
-        <option v-for="(item, index) in data" :key="index" :value="item" :selected="modelValue === item">
-            {{  item }}
-        </option>
+    <select 
+        class="form-select" 
+        aria-label="Default select example"
+        :value="modelValue"
+        @change="handleChange">
+        <option disabled value="">Select a category</option>
+        <option v-for="item in data" :key="item" :value="item">{{ item }}</option>
     </select>
 </template>

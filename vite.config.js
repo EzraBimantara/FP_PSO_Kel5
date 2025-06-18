@@ -16,9 +16,12 @@ export default defineConfig({
     },
   },
   test: {
+    environment: 'jsdom',
+    // Tambahkan baris ini untuk mendefinisikan pola file tes secara eksplisit
+    include: ['src/**/_tests_/*.spec.js'],
     coverage:{
-      reporter: ['text', 'lcov'], 
-      reportsDirectory: './coverage', 
+      reporter: ['text', 'lcov'],
+      reportsDirectory: './coverage',
       include: ['src/**/*.{js,vue}']
     }
   },

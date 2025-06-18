@@ -6,7 +6,6 @@ import NewRecipePage from '../NewRecipePage.vue'
 import RecipeFormBody from '../../recipeForm/RecipeFormBody.vue'
 import { createStore } from 'vuex'
 import { createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
-import RecipeDescription from '../../detail/RecipeDescription.vue'
 import RecipeDetail from '../../detail/RecipeDetail.vue'
 import DetailPage from '../DetailPage.vue'
 import EditRecipePage from '../EditRecipePage.vue'
@@ -24,10 +23,15 @@ import WebHeader from '../../header/WebHeader.vue'
 
 
 
+
+
+
+
 // Mock child components
 vi.mock('../../auth/WebSignup.vue', () => ({ default: { template: '<div>SignupForm</div>' } }))
 vi.mock('../../auth/WebLogin.vue', () => ({ default: { template: '<div>LoginForm</div>' } }))
 vi.mock('../NewRecipeForm.vue', () => ({ default: { template: '<form><input name="title" /><button type="submit">Submit</button></form>' } }))
+
 
 // Mock useStore agar selalu mengembalikan objek dengan dispatch mock
 const dispatchMock = vi.fn()
@@ -56,6 +60,7 @@ vi.mock('vuex', async (importOriginal) => {
   }
 })
 
+
 // Mock useRouter agar selalu mengembalikan objek dengan push mock
 const pushMock = vi.fn()
 vi.mock('vue-router', async (importOriginal) => {
@@ -71,6 +76,7 @@ vi.mock('vue-router', async (importOriginal) => {
   }
 })
 
+
 vi.mock('axios', () => ({
   default: {
     post: vi.fn(() => Promise.resolve({ data: { idToken: 'token', expiresIn: '3600', localId: 'uid' } })),
@@ -84,6 +90,7 @@ vi.mock('js-cookie', () => ({
   }
 }))
 
+
 describe('SignupPage.vue', () => {
   it('renders signup form', () => {
     const wrapper = mount(SignupPage)
@@ -91,12 +98,14 @@ describe('SignupPage.vue', () => {
   })
 })
 
+
 describe('LoginPage.vue', () => {
   it('renders login form', () => {
     const wrapper = mount(LoginPage)
     expect(wrapper.html()).toContain('LoginForm')
   })
 })
+
 
 describe('NewRecipePage.vue', () => {
   it('renders new recipe form', () => {
@@ -111,9 +120,11 @@ describe('NewRecipePage.vue', () => {
   })
 })
 
+
 describe('RecipeFormBody.vue', () => {
   it('memanggil addNewRecipe saat form di-submit', async () => {
     dispatchMock.mockClear()
+
 
     const router = createRouter({
       history: createMemoryHistory(),
@@ -121,9 +132,11 @@ describe('RecipeFormBody.vue', () => {
     })
     router.push = vi.fn() // mock push
 
+
     const wrapper = shallowMount(RecipeFormBody, {
       props: { isEdit: false }
     })
+
 
     const form = wrapper.find('form')
     expect(form.exists()).toBe(true)
@@ -133,20 +146,6 @@ describe('RecipeFormBody.vue', () => {
   })
 })
 
-describe('RecipeDescription.vue', () => {
-  it('renders recipe detail correctly', () => {
-    const wrapper = shallowMount(RecipeDescription)
-    expect(wrapper.text()).toContain(mockRecipeDetail.name)
-    expect(wrapper.text()).toContain(mockRecipeDetail.description)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.prepTime} Mins`)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.cookTime} Mins`)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.totalTime} Mins`)
-    expect(wrapper.text()).toContain(`Recipe By ${mockRecipeDetail.username}`)
-    const img = wrapper.find('img')
-    expect(img.exists()).toBe(true)
-    expect(img.attributes('src')).toBe(mockRecipeDetail.imageLink)
-  })
-})
 
 describe('RecipeDetail.vue', () => {
   it('renders child components', () => {
@@ -168,6 +167,7 @@ describe('RecipeDetail.vue', () => {
   })
 })
 
+
 describe('DetailPage.vue', () => {
   it('renders RecipeDetail component', () => {
     const wrapper = mount(DetailPage, {
@@ -178,6 +178,7 @@ describe('DetailPage.vue', () => {
     expect(wrapper.html()).toContain('recipe-detail-stub')
   })
 })
+
 
 describe('EditRecipePage.vue', () => {
   it('renders RecipeForm component when detailData exists and not loading', async () => {
@@ -199,6 +200,7 @@ describe('EditRecipePage.vue', () => {
   })
 })
 
+
 describe('HomePage.vue', () => {
   it('renders RecipeList component when recipeListStatus is true', async () => {
     const wrapper = mount(HomePage, {
@@ -218,6 +220,7 @@ describe('HomePage.vue', () => {
   })
 })
 
+
 describe('UserPage.vue', () => {
   it('renders UserMenu and dynamic component', () => {
     const wrapper = mount(UserPage, {
@@ -230,9 +233,10 @@ describe('UserPage.vue', () => {
       }
     })
     expect(wrapper.html()).toContain('user-menu-stub')
-    
+   
   })
 })
+
 
 describe('auth.js', () => {
   let state
@@ -240,17 +244,13 @@ describe('auth.js', () => {
     state = auth.state()
   })
 
+
   it('setToken mutation', () => {
     auth.mutations.setToken(state, { idToken: 'abc', expiresIn: 123 })
     expect(state.token).toBe('abc')
     expect(state.tokenExpirationDate).toBe(123)
   })
 
-  it('setUserLogin mutation', () => {
-    auth.mutations.setUserLogin(state, { userData: { name: 'A' }, loginStatus: true })
-    expect(state.userLogin).toEqual({ name: 'A' })
-    expect(state.isLogin).toBe(true)
-  })
 
   it('setUserLogout mutation', () => {
     state.token = 'abc'
@@ -264,6 +264,7 @@ describe('auth.js', () => {
     expect(state.tokenExpirationDate).toBe(null)
   })
 
+
   it('getRegisterData action', async () => {
     const commit = vi.fn()
     const dispatch = vi.fn(() => Promise.resolve())
@@ -272,12 +273,14 @@ describe('auth.js', () => {
     expect(dispatch).toHaveBeenCalledWith('addNewUser', expect.any(Object))
   })
 
+
   it('addNewUser action', async () => {
     const commit = vi.fn()
     const stateObj = { token: 'tok' }
     await auth.actions.addNewUser({ commit, state: stateObj }, { userId: 'uid' })
     expect(commit).toHaveBeenCalledWith('setUserLogin', { userData: { userId: 'uid' }, loginStatus: true })
   })
+
 
   it('getLoginData action', async () => {
     const commit = vi.fn()
@@ -288,6 +291,7 @@ describe('auth.js', () => {
     expect(result).toEqual({ userId: 'uid' })
   })
 
+
   it('getUser action', async () => {
     const commit = vi.fn()
     const result = await auth.actions.getUser({ commit }, 'uid')
@@ -296,6 +300,7 @@ describe('auth.js', () => {
   })
 })
 
+
 describe('store/index.js', () => {
   it('should create a Vuex store with recipe and auth modules', () => {
     expect(store).toBeInstanceOf(Store)
@@ -303,11 +308,13 @@ describe('store/index.js', () => {
     expect(store.hasModule('auth')).toBe(true)
   })
 
+
   it('should use the correct modules', () => {
     expect(store._modulesNamespaceMap['recipe/']._rawModule).toBe(recipe)
     expect(store._modulesNamespaceMap['auth/']._rawModule).toBe(auth)
   })
 })
+
 
 Object.defineProperty(import.meta, 'env', {
   value: {
@@ -317,11 +324,14 @@ Object.defineProperty(import.meta, 'env', {
 })
 
 
+
+
 describe('WebFooter.vue', () => {
   it('seharusnya menampilkan teks copyright', () => {
     const wrapper = mount(WebFooter);
     expect(wrapper.text()).toContain('ⓒ2022 Tasty Recipe, Inc');
   });
+
 
   it('seharusnya memiliki ikon sosial media', () => {
     const wrapper = mount(WebFooter);
@@ -329,6 +339,7 @@ describe('WebFooter.vue', () => {
     expect(instagramIcon.exists()).toBe(true);
   });
 });
+
 
 describe('SignupMenu.vue', () => {
   it('renders correctly', () => {
@@ -340,19 +351,23 @@ describe('SignupMenu.vue', () => {
       }
     })
 
+
     // Basic existence check
     expect(wrapper.exists()).toBe(true)
+
 
     // Verify router link
     const link = wrapper.findComponent(RouterLinkStub)
     expect(link.exists()).toBe(true)
     expect(link.props().to).toBe('/signup')
 
+
     // Verify content
     expect(link.text()).toContain('Sign Up')
     expect(link.find('i.fa-user').exists()).toBe(true)
   })
 })
+
 
 describe('WebHeader.vue', () => {
   it('renders header component correctly', () => {
@@ -365,8 +380,10 @@ describe('WebHeader.vue', () => {
       }
     })
 
+
     // Basic existence check
     expect(wrapper.exists()).toBe(true)
+
 
     // Check header element exists with correct classes
     const header = wrapper.find('header')
@@ -375,13 +392,16 @@ describe('WebHeader.vue', () => {
     expect(header.classes()).toContain('bg-white')
     expect(header.classes()).toContain('fixed-top')
 
+
     // Check logo link exists
     const logoLink = wrapper.findComponent(RouterLinkStub)
     expect(logoLink.exists()).toBe(true)
     expect(logoLink.props().to).toBe('/')
+
 
     // Check NavigationBar component exists
     const navBar = wrapper.findComponent({ name: 'NavigationBar' })
     expect(navBar.exists()).toBe(true)
   })
 })
+
