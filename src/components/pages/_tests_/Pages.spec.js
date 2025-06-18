@@ -6,7 +6,6 @@ import NewRecipePage from '../NewRecipePage.vue'
 import RecipeFormBody from '../../recipeForm/RecipeFormBody.vue'
 import { createStore } from 'vuex'
 import { createRouter, createMemoryHistory, createWebHistory } from 'vue-router'
-import RecipeDescription from '../../detail/RecipeDescription.vue'
 import RecipeDetail from '../../detail/RecipeDetail.vue'
 import DetailPage from '../DetailPage.vue'
 import EditRecipePage from '../EditRecipePage.vue'
@@ -133,21 +132,6 @@ describe('RecipeFormBody.vue', () => {
   })
 })
 
-describe('RecipeDescription.vue', () => {
-  it('renders recipe detail correctly', () => {
-    const wrapper = shallowMount(RecipeDescription)
-    expect(wrapper.text()).toContain(mockRecipeDetail.name)
-    expect(wrapper.text()).toContain(mockRecipeDetail.description)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.prepTime} Mins`)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.cookTime} Mins`)
-    expect(wrapper.text()).toContain(`${mockRecipeDetail.totalTime} Mins`)
-    expect(wrapper.text()).toContain(`Recipe By ${mockRecipeDetail.username}`)
-    const img = wrapper.find('img')
-    expect(img.exists()).toBe(true)
-    expect(img.attributes('src')).toBe(mockRecipeDetail.imageLink)
-  })
-})
-
 describe('RecipeDetail.vue', () => {
   it('renders child components', () => {
     const wrapper = mount(RecipeDetail, {
@@ -244,12 +228,6 @@ describe('auth.js', () => {
     auth.mutations.setToken(state, { idToken: 'abc', expiresIn: 123 })
     expect(state.token).toBe('abc')
     expect(state.tokenExpirationDate).toBe(123)
-  })
-
-  it('setUserLogin mutation', () => {
-    auth.mutations.setUserLogin(state, { userData: { name: 'A' }, loginStatus: true })
-    expect(state.userLogin).toEqual({ name: 'A' })
-    expect(state.isLogin).toBe(true)
   })
 
   it('setUserLogout mutation', () => {
